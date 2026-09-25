@@ -22,21 +22,21 @@ Ngày thực hiện: 25/09/2026
 - [x] Toàn bộ unit/integration tests — 24/24 test đạt.
 - [x] `build/Publish.ps1 -Version 0.1.0` tạo portable ZIP/checksum; SHA-256 khớp.
 - [x] Published executable chạy `--smoke-test` và exit code 0.
-- [ ] Installer compile bằng Inno Setup 6.
+- [x] Installer compile bằng Inno Setup 6.7.3; silent install/smoke test/uninstall đều exit code 0.
 
-Máy xác minh hiện tại chưa cài Inno Setup 6, vì vậy installer vẫn là release gate chưa hoàn tất.
+Installer đã được xác minh trên máy Windows 11, một màn hình 1920×1200. Uninstall xóa ứng dụng và giữ lại thư mục dữ liệu người dùng.
 
 ## Ma trận kiểm thử thủ công bắt buộc trước `v0.1.0`
 
 | Nhóm | Ma trận | Trạng thái |
 |---|---|---|
-| OS | Windows 10 22H2 x64; Windows 11 x64 | Chưa chạy |
+| OS | Windows 10 22H2 x64; Windows 11 x64 | Windows 11: installer smoke đạt; Windows 10 chưa chạy |
 | DPI | 100%, 125%, 150%, 175%, 200% | Chưa chạy |
-| Monitor | 1 màn hình; 2 màn hình cùng/khác DPI; hot-plug | Chưa chạy |
+| Monitor | 1 màn hình; 2 màn hình cùng/khác DPI; hot-plug | Đã xác nhận máy test 1 màn hình 1920×1200; functional matrix chưa chạy |
 | Overlay count | 1, 5, 10, 20 PNG | Chưa chạy |
 | GIF count | 1, 5, 10; visible/hidden/opacity 0 | Chưa chạy |
 | Lifecycle | sleep/wake; Explorer restart; sign out; shutdown | Chưa chạy |
-| Packaging | clean install; upgrade; uninstall; reinstall; portable | Chưa chạy |
+| Packaging | clean install; upgrade; uninstall; reinstall; portable | Silent install/uninstall và installed smoke đạt; upgrade/reinstall/UI chưa chạy |
 
 ## Performance/soak gate
 
@@ -49,9 +49,9 @@ Máy xác minh hiện tại chưa cài Inno Setup 6, vì vậy installer vẫn l
 
 ## Release blockers còn mở
 
-- Chưa chọn/thêm `LICENSE`; không nên phát hành public trước khi quyết định quyền phân phối.
-- Chưa có code-signing certificate; installer/portable hiện dự kiến unsigned và có thể bị SmartScreen cảnh báo.
-- Installer UI và uninstall-preserves-AppData cần máy có Inno Setup và kiểm thử thủ công.
+- Đã chọn và thêm GNU GPL-3.0; cần bảo đảm source/tag tương ứng luôn công khai cùng binary phát hành.
+- Đã chốt `v0.1.0` phát hành unsigned; release notes phải cảnh báo SmartScreen và cung cấp SHA-256.
+- Installer UI, upgrade và reinstall vẫn cần kiểm thử thủ công; silent install/uninstall-preserves-AppData đã đạt.
 - Chưa hoàn thành Windows 10/11, DPI, multi-monitor và performance matrix.
 
 ## Chính sách go/no-go

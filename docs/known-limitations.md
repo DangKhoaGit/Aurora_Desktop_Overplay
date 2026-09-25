@@ -9,4 +9,4 @@
 - Startup delay cố định 5 giây trong MVP.
 - Xóa overlay chưa garbage-collect media do file có thể được nhiều overlay dùng chung.
 - GIF cache frame để giảm CPU, có thể dùng nhiều RAM với animation lớn.
-- Installer chưa ký số nếu dự án chưa có code-signing certificate, vì vậy SmartScreen có thể cảnh báo.
+- Bản `v0.1.0` không ký số nên Windows SmartScreen có thể cảnh báo. Chỉ tải từ GitHub Release chính thức và đối chiếu SHA-256 trước khi chạy.

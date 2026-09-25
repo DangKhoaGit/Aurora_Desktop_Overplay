@@ -37,6 +37,8 @@ Sprint 5 chạy ADO như tiện ích system tray. Đóng/minimize Control Center
 powershell -NoProfile -ExecutionPolicy Bypass -File .\build\Publish.ps1 -Version 0.1.0
 ```
 
+Mã nguồn được phát hành theo giấy phép [GNU GPL v3](../LICENSE). Bản `v0.1.0` được phát hành unsigned; chỉ tải từ GitHub Release chính thức và xác minh SHA-256 trước khi chạy. Không commit file `.pfx` hoặc mật khẩu vào repository nếu bổ sung ký số trong tương lai.
+
 Lệnh tạo self-contained portable ZIP và SHA-256 trong `artifacts/release`. Thêm `-BuildInstaller` khi máy đã cài Inno Setup 6. Gỡ installer không xóa dữ liệu người dùng trong `%LocalAppData%\AuroraDesktopOverlay`.
 
 ## Kiến trúc

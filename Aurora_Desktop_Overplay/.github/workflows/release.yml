@@ -41,4 +41,8 @@ jobs:
         with:
           prerelease: ${{ contains(github.ref_name, '-') }}
           generate_release_notes: true
+          body: |
+            > **Unsigned release:** Aurora Desktop Overlay v0.1.0 is not code-signed, so Windows SmartScreen may show a warning.
+
+            Download artifacts only from this official repository. Verify each download against its accompanying `.sha256` file before running it. The corresponding GPL-3.0 source is preserved by this release tag.
           files: artifacts/release/*
