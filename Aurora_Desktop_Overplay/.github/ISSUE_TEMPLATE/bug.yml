@@ -1,0 +1,17 @@
+name: Bug report
+description: Báo lỗi có thể tái hiện
+title: "[Bug]: "
+labels: ["type:bug"]
+body:
+  - type: textarea
+    id: description
+    attributes: { label: Mô tả }
+    validations: { required: true }
+  - type: textarea
+    id: reproduce
+    attributes: { label: Các bước tái hiện }
+    validations: { required: true }
+  - type: input
+    id: environment
+    attributes: { label: Windows, DPI và số màn hình }
+    validations: { required: true }

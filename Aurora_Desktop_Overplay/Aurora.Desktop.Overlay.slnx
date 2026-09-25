@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/Aurora.Desktop.Overlay.App/Aurora.Desktop.Overlay.App.csproj" />
+    <Project Path="src/Aurora.Desktop.Overlay.Core/Aurora.Desktop.Overlay.Core.csproj" />
+    <Project Path="src/Aurora.Desktop.Overlay.Infrastructure/Aurora.Desktop.Overlay.Infrastructure.csproj" />
+    <Project Path="src/Aurora.Desktop.Overlay.Media/Aurora.Desktop.Overlay.Media.csproj" />
+    <Project Path="src/Aurora.Desktop.Overlay.Overlay/Aurora.Desktop.Overlay.Overlay.csproj" />
+    <Project Path="src/Aurora.Desktop.Overlay.Persistence/Aurora.Desktop.Overlay.Persistence.csproj" />
+    <Project Path="src/Aurora.Desktop.Overlay.Platform.Windows/Aurora.Desktop.Overlay.Platform.Windows.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/Aurora.Desktop.Overlay.Architecture.Tests/Aurora.Desktop.Overlay.Architecture.Tests.csproj" />
+    <Project Path="tests/Aurora.Desktop.Overlay.Core.Tests/Aurora.Desktop.Overlay.Core.Tests.csproj" />
+  </Folder>
+</Solution>

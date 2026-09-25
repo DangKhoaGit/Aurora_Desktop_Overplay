@@ -1,0 +1,14 @@
+bin/
+obj/
+.vs/
+.idea/
+*.user
+*.suo
+TestResults/
+artifacts/
+coverage/
+*.pfx
+*.snk
+*.cer
+*.log
+appsettings.Development.json

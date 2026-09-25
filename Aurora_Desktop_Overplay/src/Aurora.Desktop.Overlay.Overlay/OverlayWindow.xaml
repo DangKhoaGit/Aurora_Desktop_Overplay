@@ -1,0 +1,23 @@
+<Window x:Class="Aurora.Desktop.Overlay.Overlay.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Aurora Desktop Overlay" Width="320" Height="320"
+        MinWidth="48" MinHeight="48" AllowsTransparency="True"
+        Background="Transparent" ShowInTaskbar="False" Topmost="True"
+        WindowStyle="None" ResizeMode="NoResize">
+  <Grid x:Name="RootGrid" Background="Transparent" MouseLeftButtonDown="MoveOverlay">
+    <Image x:Name="MediaImage" Stretch="Uniform" IsHitTestVisible="False" />
+    <Border x:Name="EditBorder" BorderBrush="#FF4CC2FF" BorderThickness="2"
+            Background="Transparent" IsHitTestVisible="False" />
+    <Thumb x:Name="ResizeThumb" Width="18" Height="18"
+           HorizontalAlignment="Right" VerticalAlignment="Bottom"
+           Cursor="SizeNWSE" DragDelta="ResizeOverlay"
+           AutomationProperties.Name="Resize overlay" ToolTip="Drag to resize while preserving aspect ratio">
+      <Thumb.Template>
+        <ControlTemplate TargetType="Thumb">
+          <Border Background="#FF4CC2FF" BorderBrush="White" BorderThickness="1" CornerRadius="2" />
+        </ControlTemplate>
+      </Thumb.Template>
+    </Thumb>
+  </Grid>
+</Window>

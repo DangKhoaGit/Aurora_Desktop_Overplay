@@ -1,0 +1,30 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <AssemblyName>AuroraDesktopOverlay</AssemblyName>
+    <RootNamespace>Aurora.Desktop.Overlay.App</RootNamespace>
+    <Product>Aurora Desktop Overlay</Product>
+    <Description>Lightweight Windows desktop overlay manager.</Description>
+    <Authors>Aurora Desktop Overlay contributors</Authors>
+    <Version>0.1.0</Version>
+    <FileVersion>0.1.0.0</FileVersion>
+    <AssemblyVersion>0.1.0.0</AssemblyVersion>
+    <RuntimeIdentifiers>win-x64</RuntimeIdentifiers>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>true</SelfContained>
+    <PublishTrimmed>false</PublishTrimmed>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+  <ItemGroup><None Include="..\..\appsettings.json" Link="appsettings.json" CopyToOutputDirectory="PreserveNewest" /><PackageReference Include="Microsoft.Extensions.Hosting" /></ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Aurora.Desktop.Overlay.Core\Aurora.Desktop.Overlay.Core.csproj" />
+    <ProjectReference Include="..\Aurora.Desktop.Overlay.Infrastructure\Aurora.Desktop.Overlay.Infrastructure.csproj" />
+    <ProjectReference Include="..\Aurora.Desktop.Overlay.Media\Aurora.Desktop.Overlay.Media.csproj" />
+    <ProjectReference Include="..\Aurora.Desktop.Overlay.Overlay\Aurora.Desktop.Overlay.Overlay.csproj" />
+    <ProjectReference Include="..\Aurora.Desktop.Overlay.Persistence\Aurora.Desktop.Overlay.Persistence.csproj" />
+    <ProjectReference Include="..\Aurora.Desktop.Overlay.Platform.Windows\Aurora.Desktop.Overlay.Platform.Windows.csproj" />
+  </ItemGroup>
+</Project>

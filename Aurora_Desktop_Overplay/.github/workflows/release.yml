@@ -1,0 +1,44 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: windows-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+          cache: true
+          cache-dependency-path: '**/packages.lock.json'
+      - run: dotnet restore --locked-mode
+      - run: dotnet build -c Release --no-restore
+      - run: dotnet test -c Release --no-build --logger "trx;LogFileName=release-tests.trx"
+      - name: Build portable package and installer
+        shell: pwsh
+        run: |
+          $version = "${{ github.ref_name }}".TrimStart('v')
+          ./build/Publish.ps1 -Version $version -BuildInstaller
+      - name: Smoke test published executable
+        shell: pwsh
+        run: |
+          $process = Start-Process -FilePath ./artifacts/publish/win-x64/AuroraDesktopOverlay.exe -ArgumentList '--smoke-test' -Wait -PassThru -WindowStyle Hidden
+          if ($process.ExitCode -ne 0) {
+            throw "Smoke test failed with exit code $($process.ExitCode)."
+          }
+      - uses: actions/upload-artifact@v4
+        with:
+          name: AuroraDesktopOverlay-${{ github.ref_name }}
+          path: artifacts/release/*
+      - uses: softprops/action-gh-release@v2
+        with:
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true
+          files: artifacts/release/*
