@@ -2,8 +2,10 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Globalization;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Interop;
 using System.Windows.Threading;
 using Aurora.Desktop.Overlay.Core.Models;
 using Aurora.Desktop.Overlay.Core.Interfaces;
@@ -30,6 +32,22 @@ public partial class MainWindow : Window
     private bool _isRestoring = true;
     private bool _saveInProgress;
     private bool _allowClose;
+    private bool _isDarkTheme;
+
+    private static readonly IReadOnlyDictionary<string, (string Light, string Dark)> ThemeColors =
+        new Dictionary<string, (string, string)>
+        {
+            ["WindowBrush"] = ("#FFF7F8FC", "#FF05070B"),
+            ["SurfaceBrush"] = ("#FFFFFFFF", "#FF090D14"),
+            ["SurfaceMutedBrush"] = ("#FFF0F2F8", "#FF0D1420"),
+            ["TextBrush"] = ("#FF172033", "#FF62C7FF"),
+            ["MutedTextBrush"] = ("#FF667085", "#FF70A9D1"),
+            ["BorderBrush"] = ("#FFDCE1EC", "#FF245D8A"),
+            ["AccentBrush"] = ("#FF6C5CE7", "#FF168DCC"),
+            ["AccentSoftBrush"] = ("#FFEDEAFF", "#FF071D2D"),
+            ["PrimaryTextBrush"] = ("#FFFFFFFF", "#FF02070A"),
+            ["SelectionBrush"] = ("#FFDCD6FF", "#FF103E5C")
+        };
 
     public MainWindow(OverlayWindowCoordinator coordinator, MediaFileValidator validator,
         StaticImageLoader imageLoader, IMonitorService monitorService, MediaImporter mediaImporter,
@@ -56,6 +74,44 @@ public partial class MainWindow : Window
     }
 
     private OverlayItem? SelectedItem => OverlayList.SelectedItem as OverlayItem;
+
+    private void ToggleThemeClick(object sender, RoutedEventArgs e)
+    {
+        _isDarkTheme = !_isDarkTheme;
+        foreach (var (key, colors) in ThemeColors)
+            Application.Current.Resources[key] = new System.Windows.Media.SolidColorBrush(
+                (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(
+                    _isDarkTheme ? colors.Dark : colors.Light));
+        ApplySystemControlColors();
+        ApplyTitleBarTheme();
+        ThemeButton.Content = _isDarkTheme ? "☀  Light mode" : "☾  Dark mode";
+        StatusText.Text = _isDarkTheme ? "Dark mode enabled." : "Light mode enabled.";
+    }
+
+    private static void ApplySystemControlColors()
+    {
+        var resources = Application.Current.Resources;
+        resources[SystemColors.WindowBrushKey] = resources["SurfaceBrush"];
+        resources[SystemColors.ControlBrushKey] = resources["SurfaceBrush"];
+        resources[SystemColors.ControlLightBrushKey] = resources["SurfaceMutedBrush"];
+        resources[SystemColors.ControlTextBrushKey] = resources["TextBrush"];
+        resources[SystemColors.WindowTextBrushKey] = resources["TextBrush"];
+        resources[SystemColors.HighlightBrushKey] = resources["SelectionBrush"];
+        resources[SystemColors.HighlightTextBrushKey] = resources["TextBrush"];
+        resources[SystemColors.GrayTextBrushKey] = resources["MutedTextBrush"];
+    }
+
+    private void ApplyTitleBarTheme()
+    {
+        var enabled = _isDarkTheme ? 1 : 0;
+        var handle = new WindowInteropHelper(this).Handle;
+        if (handle != nint.Zero)
+            _ = DwmSetWindowAttribute(handle, 20, ref enabled, sizeof(int));
+    }
+
+    [DllImport("dwmapi.dll")]
+    private static extern int DwmSetWindowAttribute(nint windowHandle, int attribute,
+        ref int attributeValue, int attributeSize);
 
     private async void OpenOverlayClick(object sender, RoutedEventArgs e)
     {
@@ -102,8 +158,11 @@ public partial class MainWindow : Window
 
             try
             {
+                var defaultName = Path.GetFileNameWithoutExtension(normalizedPath);
+                var nameDialog = new OverlayNameDialog(defaultName, "Name your overlay") { Owner = this };
+                if (nameDialog.ShowDialog() != true) continue;
                 var importedPath = await _mediaImporter.ImportAsync(normalizedPath);
-                lastCreated = _coordinator.Create(importedPath, _imageLoader.Load(importedPath));
+                lastCreated = _coordinator.Create(importedPath, _imageLoader.Load(importedPath), nameDialog.OverlayName);
                 importedCount++;
             }
             catch (InvalidDataException exception)
@@ -126,6 +185,18 @@ public partial class MainWindow : Window
         var copy = _coordinator.Duplicate(selected.Id);
         RefreshOverlayList(copy?.Id);
         StatusText.Text = copy is null ? "Overlay could not be duplicated." : $"Duplicated {selected.Name}.";
+    }
+
+    private void RenameClick(object sender, RoutedEventArgs e)
+    {
+        if (SelectedItem is not { } selected) return;
+        var dialog = new OverlayNameDialog(selected.Name, "Rename overlay") { Owner = this };
+        if (dialog.ShowDialog() != true) return;
+        if (_coordinator.Rename(selected.Id, dialog.OverlayName))
+        {
+            RefreshOverlayList(selected.Id);
+            StatusText.Text = $"Renamed overlay to {dialog.OverlayName}.";
+        }
     }
 
     private void DeleteClick(object sender, RoutedEventArgs e)

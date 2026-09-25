@@ -9,10 +9,11 @@ public sealed class OverlayManager : IOverlayService
     private readonly Dictionary<Guid, OverlayItem> _overlays = [];
     public IReadOnlyCollection<OverlayItem> ActiveOverlays => _overlays.Values;
 
-    public OverlayItem Create(string mediaPath, OverlaySize? size = null)
+    public OverlayItem Create(string mediaPath, OverlaySize? size = null, string? name = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(mediaPath);
-        var item = OverlayItem.Create(Path.GetFileNameWithoutExtension(mediaPath), mediaPath, size);
+        var displayName = string.IsNullOrWhiteSpace(name) ? Path.GetFileNameWithoutExtension(mediaPath) : name.Trim();
+        var item = OverlayItem.Create(displayName, mediaPath, size);
         _overlays.Add(item.Id, item);
         return item;
     }

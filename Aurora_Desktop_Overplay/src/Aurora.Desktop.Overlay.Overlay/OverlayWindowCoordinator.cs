@@ -19,10 +19,10 @@ public sealed class OverlayWindowCoordinator(
 
     public IReadOnlyCollection<OverlayItem> Items => overlayService.ActiveOverlays;
 
-    public OverlayItem Create(string mediaPath, LoadedImage image)
+    public OverlayItem Create(string mediaPath, LoadedImage image, string? name = null)
     {
         var size = OverlaySize.FitWithin(image.PixelWidth, image.PixelHeight);
-        var item = overlayService.Create(mediaPath, size);
+        var item = overlayService.Create(mediaPath, size, name);
         Attach(item, image);
         return item;
     }
@@ -56,6 +56,15 @@ public sealed class OverlayWindowCoordinator(
     public bool TryGet(Guid id, out OverlayItem? item) => overlayService.TryGet(id, out item);
 
     public bool IsAnimated(Guid id) => _windows.TryGetValue(id, out var entry) && entry.Image.IsAnimated;
+
+    public bool Rename(Guid id, string name)
+    {
+        if (!_windows.ContainsKey(id) || !overlayService.TryGet(id, out var item) || item is null ||
+            string.IsNullOrWhiteSpace(name)) return false;
+        var renamed = overlayService.Update(item.WithName(name));
+        if (renamed) OnChanged();
+        return renamed;
+    }
 
     public bool HasVisibleOverlays => overlayService.ActiveOverlays.Any(item => item.IsVisible);
 

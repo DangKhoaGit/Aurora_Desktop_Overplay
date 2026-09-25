@@ -23,6 +23,7 @@ public partial class OverlayWindow : Window
     private int _fpsLimit = 30;
     private int _frameIndex;
     private HwndSource? _windowSource;
+    private bool _constrainingLayout;
 
     public OverlayWindow(LoadedImage image, IWindowStyleService windowStyleService, IMonitorService monitorService)
     {
@@ -38,6 +39,7 @@ public partial class OverlayWindow : Window
         SourceInitialized += HandleSourceInitialized;
         LocationChanged += (_, _) =>
         {
+            ConstrainToWorkArea(false);
             RaiseLayoutChanged();
             UpdatePlaybackState();
         };
@@ -121,8 +123,14 @@ public partial class OverlayWindow : Window
         else
             proposedWidth = proposedHeight * _aspectRatio;
 
-        Width = proposedWidth;
-        Height = proposedHeight;
+        var monitor = _monitorService.GetNearestMonitor(new WindowInteropHelper(this).Handle);
+        var availableWidth = Math.Max(OverlaySize.MinimumDimension,
+            monitor.WorkAreaPosition.X + monitor.WorkAreaSize.Width - Left);
+        var availableHeight = Math.Max(OverlaySize.MinimumDimension,
+            monitor.WorkAreaPosition.Y + monitor.WorkAreaSize.Height - Top);
+        var scale = Math.Min(1.0, Math.Min(availableWidth / proposedWidth, availableHeight / proposedHeight));
+        Width = Math.Max(OverlaySize.MinimumDimension, proposedWidth * scale);
+        Height = Math.Max(OverlaySize.MinimumDimension, proposedHeight * scale);
         RaiseLayoutChanged();
     }
 
@@ -165,14 +173,39 @@ public partial class OverlayWindow : Window
 
     private void RestoreToVisibleArea()
     {
-        var handle = new WindowInteropHelper(this).Handle;
-        if (handle == nint.Zero) return;
-        var position = _monitorService.EnsureVisible(new OverlayPosition(Left, Top),
-            new OverlaySize(Width, Height), handle);
-        Left = position.X;
-        Top = position.Y;
+        ConstrainToWorkArea(true);
         RaiseLayoutChanged();
         UpdatePlaybackState();
+    }
+
+    private void ConstrainToWorkArea(bool constrainSize)
+    {
+        if (_constrainingLayout) return;
+        var handle = new WindowInteropHelper(this).Handle;
+        if (handle == nint.Zero) return;
+        _constrainingLayout = true;
+        try
+        {
+            if (constrainSize)
+            {
+                var monitor = _monitorService.GetNearestMonitor(handle);
+                var scale = Math.Min(1.0, Math.Min(monitor.WorkAreaSize.Width / Width,
+                    monitor.WorkAreaSize.Height / Height));
+                if (scale < 1.0)
+                {
+                    Width *= scale;
+                    Height *= scale;
+                }
+            }
+            var position = _monitorService.EnsureVisible(new OverlayPosition(Left, Top),
+                new OverlaySize(Width, Height), handle);
+            Left = position.X;
+            Top = position.Y;
+        }
+        finally
+        {
+            _constrainingLayout = false;
+        }
     }
 
     private void AdvanceFrame(object? sender, EventArgs args)

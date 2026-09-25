@@ -2,6 +2,23 @@
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-09-25
+
+### Added
+
+- Giao diện Control Center mới với chế độ sáng và tối.
+- Icon ứng dụng được dùng cho cửa sổ và system tray.
+- Đặt tên overlay khi thêm ảnh và đổi tên sau khi thêm.
+
+### Changed
+
+- Cải thiện màu sắc, độ tương phản và trạng thái điều khiển trong dark mode.
+
+### Fixed
+
+- Giới hạn vị trí và kích thước overlay trong vùng làm việc của màn hình.
+- Hộp thoại đổi tên tự điều chỉnh chiều cao ở các mức DPI khác nhau.
+
 ### Added
 
 - Solution .NET 10/WPF theo module.

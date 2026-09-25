@@ -18,6 +18,25 @@ public sealed class OverlayManagerTests
     }
 
     [Fact]
+    public void CreateUsesTrimmedCustomName()
+    {
+        var manager = new OverlayManager();
+
+        var result = manager.Create("sample.png", name: "  Reference image  ");
+
+        Assert.Equal("Reference image", result.Name);
+    }
+
+    [Fact]
+    public void WithNameRejectsBlankNamesAndTrimsValidNames()
+    {
+        var item = OverlayItem.Create("original", "sample.png");
+
+        Assert.Equal("renamed", item.WithName("  renamed  ").Name);
+        Assert.Throws<ArgumentException>(() => item.WithName("   "));
+    }
+
+    [Fact]
     public void RemoveDeletesExistingOverlay()
     {
         var manager = new OverlayManager();

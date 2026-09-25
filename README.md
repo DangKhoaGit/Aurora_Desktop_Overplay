@@ -7,7 +7,7 @@
 
 **Aurora Desktop Overlay (ADO)** là ứng dụng Windows mã nguồn mở giúp đặt ảnh và GIF trong suốt lên màn hình dưới dạng overlay. ADO phù hợp để trang trí desktop, hiển thị hình tham chiếu hoặc bố trí nội dung trực quan mà không can thiệp vào tiến trình của ứng dụng khác.
 
-> Trạng thái hiện tại: `v0.1.0-rc.1` — bản release candidate dành cho kiểm thử trước khi phát hành stable.
+> Trạng thái hiện tại: `v0.2.0` — giao diện mới, chế độ sáng/tối và quản lý overlay hoàn thiện hơn.
 
 ## Điểm nổi bật
 
@@ -37,12 +37,12 @@ Mỗi release cung cấp:
 
 ### Lưu ý về SmartScreen
 
-ADO `v0.1.0` chưa được ký số nên Windows SmartScreen có thể hiển thị cảnh báo. Chỉ tải ứng dụng từ repository chính thức này và kiểm tra SHA-256 trước khi chạy.
+ADO `v0.2.0` chưa được ký số nên Windows SmartScreen có thể hiển thị cảnh báo. Chỉ tải ứng dụng từ repository chính thức này và kiểm tra SHA-256 trước khi chạy.
 
 Ví dụ kiểm tra installer bằng PowerShell:
 
 ```powershell
-$artifact = ".\AuroraDesktopOverlay-0.1.0-rc.1-win-x64-setup.exe"
+$artifact = ".\AuroraDesktopOverlay-0.2.0-win-x64-setup.exe"
 $expected = ((Get-Content "$artifact.sha256") -split "\s+")[0]
 $actual = (Get-FileHash $artifact -Algorithm SHA256).Hash.ToLowerInvariant()
 
@@ -105,7 +105,7 @@ dotnet run --project src/Aurora.Desktop.Overlay.App
 
 ```powershell
 cd Aurora_Desktop_Overplay
-powershell -NoProfile -ExecutionPolicy Bypass -File .\build\Publish.ps1 -Version 0.1.0 -BuildInstaller
+powershell -NoProfile -ExecutionPolicy Bypass -File .\build\Publish.ps1 -Version 0.2.0 -BuildInstaller
 ```
 
 Artifact được tạo trong `Aurora_Desktop_Overplay/artifacts/release`.
@@ -144,7 +144,7 @@ docs/
 
 - Chỉ hỗ trợ Windows 10/11 x64.
 - Exclusive fullscreen, UAC Secure Desktop và một số game/anti-cheat có thể không hiển thị overlay.
-- WebP, APNG, SVG và video chưa được hỗ trợ trong `v0.1.0`.
+- WebP, APNG, SVG và video chưa được hỗ trợ trong `v0.2.0`.
 - Desktop Layer và Force Above Taskbar chưa được mở trong giao diện.
 - Hotkey chưa thể tùy chỉnh từ UI.
 

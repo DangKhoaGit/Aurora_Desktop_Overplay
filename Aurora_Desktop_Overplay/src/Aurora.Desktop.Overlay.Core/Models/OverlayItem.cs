@@ -25,6 +25,12 @@ public sealed record OverlayItem(
     public OverlayItem WithOpacity(double opacity) =>
         this with { Opacity = Math.Clamp(opacity, 0.0, 1.0) };
 
+    public OverlayItem WithName(string name)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(name);
+        return this with { Name = name.Trim() };
+    }
+
     public OverlayItem WithPlayback(bool paused, double speed, int fpsLimit) => this with
     {
         IsPaused = paused,
